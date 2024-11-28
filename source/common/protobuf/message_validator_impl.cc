@@ -16,9 +16,11 @@ const char deprecation_error[] = " If continued use of this field is absolutely 
                                  "see " ENVOY_DOC_URL_RUNTIME_OVERRIDE_DEPRECATED " for "
                                  "how to apply a temporary and highly discouraged override.";
 
-absl::Status onDeprecatedFieldCommon(absl::string_view description, bool soft_deprecation) {
+absl::Status onDeprecatedFieldCommon(absl::string_view description, bool soft_deprecation, bool skip_deprecated_warning_logs) {
   if (soft_deprecation) {
-    ENVOY_LOG_MISC(warn, "Deprecated field: {}", absl::StrCat(description, deprecation_error));
+    if (!skip_deprecated_warning_logs) {
+      ENVOY_LOG_MISC(warn, "Deprecated field: {}", absl::StrCat(description, deprecation_error));
+    }
   } else {
     return absl::InvalidArgumentError(absl::StrCat(description, deprecation_error));
   }
@@ -69,7 +71,7 @@ absl::Status WarningValidationVisitorImpl::onUnknownField(absl::string_view desc
 
 absl::Status WarningValidationVisitorImpl::onDeprecatedField(absl::string_view description,
                                                              bool soft_deprecation) {
-  return onDeprecatedFieldCommon(description, soft_deprecation);
+  return onDeprecatedFieldCommon(description, soft_deprecation, isSkipDeprecatedWarningLogs());
 }
 
 void WarningValidationVisitorImpl::onWorkInProgress(absl::string_view description) {
@@ -83,7 +85,7 @@ absl::Status StrictValidationVisitorImpl::onUnknownField(absl::string_view descr
 
 absl::Status StrictValidationVisitorImpl::onDeprecatedField(absl::string_view description,
                                                             bool soft_deprecation) {
-  return onDeprecatedFieldCommon(description, soft_deprecation);
+  return onDeprecatedFieldCommon(description, soft_deprecation, isSkipDeprecatedWarningLogs());
 }
 
 void StrictValidationVisitorImpl::onWorkInProgress(absl::string_view description) {

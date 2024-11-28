@@ -17,8 +17,12 @@ public:
   void clearRuntime() { runtime_ = {}; } // for tests
   OptRef<Runtime::Loader> runtime() override { return runtime_; }
 
+  void setSkipppingDeprecatedWarningLogs(bool skip_deprecated_warning_logs) { skip_deprecated_warning_logs_ = skip_deprecated_warning_logs; }
+  bool isSkipDeprecatedWarningLogs() const { return skip_deprecated_warning_logs_; }
+
 protected:
   OptRef<Runtime::Loader> runtime_;
+  bool skip_deprecated_warning_logs_ = false;
 };
 
 class NullValidationVisitorImpl : public ValidationVisitorBase {
@@ -122,6 +126,12 @@ public:
     strict_validation_visitor_.setRuntime(runtime);
     static_warning_validation_visitor_.setRuntime(runtime);
     dynamic_warning_validation_visitor_.setRuntime(runtime);
+  }
+
+  void setSkipppingDeprecatedWarningLogs(bool skip_deprecated_warning_logs) {
+    strict_validation_visitor_.setSkipppingDeprecatedWarningLogs(skip_deprecated_warning_logs);
+    static_warning_validation_visitor_.setSkipppingDeprecatedWarningLogs(skip_deprecated_warning_logs);
+    dynamic_warning_validation_visitor_.setSkipppingDeprecatedWarningLogs(skip_deprecated_warning_logs);
   }
 
 private:

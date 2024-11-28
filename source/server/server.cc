@@ -448,6 +448,9 @@ absl::Status InstanceBase::initializeOrThrow(Network::Address::InstanceConstShar
     RETURN_IF_NOT_OK(
         Utility::assertExclusiveLogFormatMethod(options_, bootstrap_.application_log_config()));
     RETURN_IF_NOT_OK(Utility::maybeSetApplicationLogFormat(bootstrap_.application_log_config()));
+    if (bootstrap_.has_application_log_config().has_skip_deprecated_warning_logs()) {
+      validation_context_.setSkipppingDeprecatedWarningLogs(bootstrap_.application_log_config().skip_deprecated_warning_logs());
+    }
   }
 
 #ifdef ENVOY_PERFETTO

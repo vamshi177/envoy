@@ -122,6 +122,8 @@ message Bootstrap {
     // the default log format. Setting both this field and :option:`--log-format` command line
     // option is not allowed, and will cause a bootstrap error.
     LogFormat log_format = 1;
+
+    bool skip_deprecated_warning_logs = 2;
   }
 
   message DeferredStatOptions {
